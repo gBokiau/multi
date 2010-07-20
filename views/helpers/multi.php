@@ -35,18 +35,30 @@ App::import('Core', 'Helper');
  * @package       cake
  * @subpackage    cake.cake
  */
-class MultiHelper extends ApplHelper {
+class MultiHelper extends AppHelper {
 	var $helpers = array('Form');
-	function translate($fiefds, $locales) {
+	var $locales = array();
+	function inputs($fields, $locales = null) {
+		if ($locales == null) {
+			$locales = $this->locales;
+		}
 		$out = '';
-		foreach ($locales as $locale) {
-			$Fields = array()
-			$Fields['legend'] = $locale['locale'];
-			foreach ($fields as $field => $data) {
-				$Fields["$field.$locale"] = $data;
+		foreach ($locales as $lang => $language) {
+			$Fields = array();
+			$Fields['legend'] = __($language, true);
+			foreach ($fields as $name => $option) {
+				if (is_numeric($name) && !is_array($options)) {
+					$name = $options;
+					$options = array();
+				}
+				$Fields["$name.$lang"] = $option;
 			}
 			$out .= $this->Form->inputs($Fields);
 		}
+		return $out;
+	}
+	function __construct($config = array()) {
+		$this->locales = $config;
 	}
 }
 ?>

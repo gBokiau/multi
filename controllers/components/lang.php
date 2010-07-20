@@ -23,6 +23,7 @@ class LangComponent extends Object {
 			$this->_setLanguage();
 		$this->_updateCookie($this->lang);
 		setlocale(LC_ALL, $this->catalog[$this->lang]['_locale']);
+		$this->_attachHelper();
 	}
 
 	function _setLanguage() {
@@ -56,7 +57,13 @@ class LangComponent extends Object {
 		}
 		$this->i18n->l10n->__l10nCatalog = $this->catalog;
 	}
-	
+	function _attachHelper() {
+		$this->controller->helpers['Multi.Multi'] = array();
+		foreach($this->catalog as $lang => $locale) {
+			extract($locale);
+			$this->controller->helpers['Multi.Multi'][$locale] = $language;
+		}
+	}
 	function getLocales() {
 		$out = array();
 		foreach($this->catalog as $lang)
