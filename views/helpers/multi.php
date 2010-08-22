@@ -38,7 +38,11 @@ App::import('Core', 'Helper');
 class MultiHelper extends AppHelper {
 	var $helpers = array('Form');
 	var $locales = array();
-	function inputs($fields, $locales = null) {
+	var $fields = array();
+	function inputs($fields = null, $locales = null) {
+		if ($fields == null) {
+			$fields = $this->fields;
+		}
 		if ($locales == null) {
 			$locales = $this->locales;
 		}
@@ -46,19 +50,22 @@ class MultiHelper extends AppHelper {
 		foreach ($locales as $lang => $language) {
 			$Fields = array();
 			$Fields['legend'] = __($language, true);
-			foreach ($fields as $name => $option) {
+			foreach ($fields as $name => $options) {
 				if (is_numeric($name) && !is_array($options)) {
 					$name = $options;
-					$options = array();
+					$options = array('label'=>__(Inflector::humanize(Inflector::underscore($name)), true));
 				}
-				$Fields["$name.$lang"] = $option;
+				$Fields["$name.$lang"] = $options;
 			}
 			$out .= $this->Form->inputs($Fields);
 		}
 		return $out;
 	}
 	function __construct($config = array()) {
-		$this->locales = $config;
+		if (isset($config['locales']))
+			$this->locales = $config['locales'];
+		if (isset($config['fields']))
+			$this->fields = $config['fields'];
 	}
 }
 ?>

@@ -2,6 +2,7 @@
 class LangComponent extends Object {
 	var $components = array('Cookie');
 	var $lang = null;
+	var $fields = null;
 	var $catalog = array();
 	var $langFromUrl = null;
 	var $langFromCookie = null;
@@ -13,11 +14,11 @@ class LangComponent extends Object {
 		}
 		$this->i18n = $controller->i18n = I18n::getInstance();
 		$this->_makeCatalog($settings);
-
+		
 		$this->langFromUrl =@ $this->_assertLanguage(isset($controller->params['language'])? $controller->params['language'] : "");
 		$this->langFromCookie = $this->_assertLanguage($this->Cookie->read('lang'));
 		$this->controller =& $controller;
-
+		$this->fields = $this->_detectFields();
 		$this->lang = Configure::read('Config.language');
 		if ($this->lang == false)
 			$this->_setLanguage();
@@ -57,12 +58,21 @@ class LangComponent extends Object {
 		}
 		$this->i18n->l10n->__l10nCatalog = $this->catalog;
 	}
+	function _detectFields() {
+		//$this->log($this->controller);
+		$model = $this->controller->{$this->controller->modelClass};
+		if(array_key_exists('Multi.TranslateAll', (array)$model->actsAs)) {
+			return $model->actsAs['Multi.TranslateAll'];
+		}
+		return null;
+	}
 	function _attachHelper() {
-		$this->controller->helpers['Multi.Multi'] = array();
+		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields);
 		foreach($this->catalog as $lang => $locale) {
 			extract($locale);
-			$this->controller->helpers['Multi.Multi'][$locale] = $language;
+			$this->controller->helpers['Multi.Multi']['locales'][$locale] = $language;
 		}
+		$this->log($this->controller->helpers);
 	}
 	function getLocales() {
 		$out = array();
