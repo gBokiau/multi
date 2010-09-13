@@ -67,6 +67,18 @@ class MultiHelper extends AppHelper {
 		}
 		return $out;
 	}
-
+	function catalog($trim = false) {
+		$out = array();
+		foreach ($this->catalog as $lang => $language) {
+			if ($trim && $pos = strpos($language['language'], '('))
+				$language['language'] = substr($language['language'], 0, $pos);
+			$out[] = array(
+				'code' => $lang,
+				'language' => $language['language'],
+				'active' => ($lang == $this->lang)
+			);
+		}
+		return $out;
+	}
 }
 ?>

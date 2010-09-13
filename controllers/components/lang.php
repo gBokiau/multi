@@ -24,6 +24,7 @@ class LangComponent extends Object {
 		if ($this->lang == false)
 			$this->_setLanguage();
 		$controller->lang = $this->lang;
+		Configure::write('Config.locale', $this->catalog[$this->lang]['locale']);
 		$this->_updateCookie($this->lang);
 		setlocale(LC_ALL, $this->catalog[$this->lang]['_locale']);
 		$this->_attachHelper();
@@ -68,7 +69,7 @@ class LangComponent extends Object {
 		return null;
 	}
 	function _attachHelper() {
-		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields, 'lang'=>$this->lang);
+		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields, 'lang'=>$this->lang, 'catalog'=>$this->catalog);
 		foreach($this->catalog as $lang => $locale) {
 			extract($locale);
 			$this->controller->helpers['Multi.Multi']['locales'][$locale] = $language;
