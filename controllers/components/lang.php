@@ -68,7 +68,7 @@ class LangComponent extends Object {
 		return null;
 	}
 	function _attachHelper() {
-		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields);
+		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields, 'lang'=>$this->lang);
 		foreach($this->catalog as $lang => $locale) {
 			extract($locale);
 			$this->controller->helpers['Multi.Multi']['locales'][$locale] = $language;

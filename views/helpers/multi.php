@@ -39,6 +39,12 @@ class MultiHelper extends AppHelper {
 	var $helpers = array('Form');
 	var $locales = array();
 	var $fields = array();
+	var $lang = null;
+	function __construct($config = array()) {
+		foreach(array_keys($config) as $setting) {
+			$this->{$setting} = $config[$setting];
+		}
+	}
 	function inputs($fields = null, $locales = null) {
 		if ($fields == null) {
 			$fields = $this->fields;
@@ -61,11 +67,6 @@ class MultiHelper extends AppHelper {
 		}
 		return $out;
 	}
-	function __construct($config = array()) {
-		if (isset($config['locales']))
-			$this->locales = $config['locales'];
-		if (isset($config['fields']))
-			$this->fields = $config['fields'];
-	}
+
 }
 ?>
