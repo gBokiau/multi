@@ -16,12 +16,14 @@ class LangComponent extends Object {
 		$this->_makeCatalog($settings);
 		
 		$this->langFromUrl =@ $this->_assertLanguage(isset($controller->params['language'])? $controller->params['language'] : "");
+		$this->Cookie->key = Configure::read('Security.salt');
 		$this->langFromCookie = $this->_assertLanguage($this->Cookie->read('lang'));
 		$this->controller =& $controller;
 		$this->fields = $this->_detectFields();
 		$this->lang = Configure::read('Config.language');
 		if ($this->lang == false)
 			$this->_setLanguage();
+		$controller->lang = $this->lang;
 		$this->_updateCookie($this->lang);
 		setlocale(LC_ALL, $this->catalog[$this->lang]['_locale']);
 		$this->_attachHelper();
