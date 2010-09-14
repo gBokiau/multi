@@ -59,7 +59,6 @@ class LangComponent extends Object {
 		$this->i18n->l10n->__l10nCatalog = $this->catalog;
 	}
 	function _detectFields() {
-		//$this->log($this->controller);
 		$model = $this->controller->{$this->controller->modelClass};
 		if(array_key_exists('Multi.TranslateAll', (array)$model->actsAs)) {
 			return $model->actsAs['Multi.TranslateAll'];
@@ -72,7 +71,6 @@ class LangComponent extends Object {
 			extract($locale);
 			$this->controller->helpers['Multi.Multi']['locales'][$locale] = $language;
 		}
-		$this->log($this->controller->helpers);
 	}
 	function getLocales() {
 		$out = array();
