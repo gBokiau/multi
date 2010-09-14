@@ -16,12 +16,15 @@ class LangComponent extends Object {
 		$this->_makeCatalog($settings);
 		
 		$this->langFromUrl =@ $this->_assertLanguage(isset($controller->params['language'])? $controller->params['language'] : "");
+		$this->Cookie->key = Configure::read('Security.salt');
 		$this->langFromCookie = $this->_assertLanguage($this->Cookie->read('lang'));
 		$this->controller =& $controller;
 		$this->fields = $this->_detectFields();
 		$this->lang = Configure::read('Config.language');
 		if ($this->lang == false)
 			$this->_setLanguage();
+		$controller->lang = $this->lang;
+		Configure::write('Config.locale', $this->catalog[$this->lang]['locale']);
 		$this->_updateCookie($this->lang);
 		setlocale(LC_ALL, $this->catalog[$this->lang]['_locale']);
 		$this->_attachHelper();
@@ -66,7 +69,7 @@ class LangComponent extends Object {
 		return null;
 	}
 	function _attachHelper() {
-		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields);
+		$this->controller->helpers['Multi.Multi'] = array('locales'=>array(), 'fields'=>$this->fields, 'lang'=>$this->lang, 'catalog'=>$this->catalog);
 		foreach($this->catalog as $lang => $locale) {
 			extract($locale);
 			$this->controller->helpers['Multi.Multi']['locales'][$locale] = $language;
