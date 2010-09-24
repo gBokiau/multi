@@ -62,7 +62,7 @@ class LangComponent extends Object {
 		$this->i18n->l10n->__l10nCatalog = $this->catalog;
 	}
 	function _detectFields() {
-		if($controller->name == 'CakeError') {
+		if($this->controller->name == 'CakeError') {
 			return null;
 		}
 		$model = $this->controller->{$this->controller->modelClass};
