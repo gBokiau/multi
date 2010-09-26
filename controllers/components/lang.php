@@ -25,7 +25,7 @@ class LangComponent extends Object {
 		$controller->lang = $this->lang;
 		Configure::write('Config.locale', $this->catalog[$this->lang]['locale']);
 		$this->_updateCookie($this->lang);
-		setlocale(LC_ALL, $this->catalog[$this->lang]['_locale']);
+		setlocale(LC_TIME, $this->catalog[$this->lang]['_locale']);
 		
 		$this->_attachHelper();
 	}
