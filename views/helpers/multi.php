@@ -80,5 +80,10 @@ class MultiHelper extends AppHelper {
 		}
 		return $out;
 	}
+	
+	function element($name, $params = array(), $loadHelpers = false) {
+		$View = &ClassRegistry::getObject('view');
+		return $View->element($name.'/'.$this->lang, $params, $loadHelpers);
+	}
 }
 ?>
