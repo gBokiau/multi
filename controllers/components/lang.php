@@ -6,6 +6,7 @@ class LangComponent extends Object {
 	var $catalog = array();
 	var $langFromUrl = null;
 	var $langFromCookie = null;
+	var $includes = array();
 
 	//called before Controller::beforeFilter()
 	function initialize(&$controller, $settings = array()) {
@@ -26,7 +27,6 @@ class LangComponent extends Object {
 		Configure::write('Config.locale', $this->catalog[$this->lang]['locale']);
 		$this->_updateCookie($this->lang);
 		setlocale(LC_TIME, $this->catalog[$this->lang]['_locale']);
-		
 		$this->_attachHelper();
 	}
 
@@ -58,6 +58,7 @@ class LangComponent extends Object {
 		foreach($languages as $lang=>$locale) {
 			$this->catalog[$lang] = $this->i18n->l10n->__l10nCatalog[$lang];
 			$this->catalog[$lang]['_locale'] = $locale;
+			$this->includes[$this->catalog[$lang]['locale']] = $this->catalog[$lang]['language'];
 		}
 		$this->i18n->l10n->__l10nCatalog = $this->catalog;
 	}
@@ -66,6 +67,7 @@ class LangComponent extends Object {
 			return null;
 		}
 		$model = $this->controller->{$this->controller->modelClass};
+		$this->controller->{$this->controller->modelClass}->includes['locales'] = $this->includes;
 		if(array_key_exists('Multi.TranslateAll', (array)$model->actsAs)) {
 			return $model->actsAs['Multi.TranslateAll'];
 		}
