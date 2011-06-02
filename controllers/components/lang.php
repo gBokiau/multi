@@ -87,5 +87,17 @@ class LangComponent extends Object {
 			$out[] = $lang['locale'];
 		return $out;
 	}
+	function prepopulate($data=array(), $pass=array()) {
+		$add = array_keys($this->includes);
+		if (count($data)) {
+			$ignore = Set::classicExtract($data, '{n}.locale');
+			$add = array_diff($add, $ignore);
+		}
+		$empty = array_merge(array('user_id'=>1, 'model'=>$this->controller->modelClass, 'page_number'=>1), $pass);
+		foreach ($add as $locale) {
+			$data[] = $empty + array('locale'=>$locale);
+		}
+		return $data;
+	}
 }
 ?>
