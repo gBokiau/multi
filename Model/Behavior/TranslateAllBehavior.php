@@ -31,7 +31,8 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
  */
-App::import('Core', 'translate');
+App::uses('Translate', 'Model/Behavior');
+
 class TranslateAllBehavior extends TranslateBehavior {
 /**
  * afterFind Callback

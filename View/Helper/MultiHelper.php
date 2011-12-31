@@ -24,7 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Helper');
+App::uses('AppHelper', 'View/Helper');
 /**
  * This is a placeholder class.
  * Create the same file in app/app_helper.php
@@ -39,11 +39,13 @@ class MultiHelper extends AppHelper {
 	var $helpers = array('Form');
 	var $locales = array();
 	var $fields = array();
+	var $catalog = array();
 	var $lang = null;
-	function __construct($config = array()) {
-		foreach(array_keys($config) as $setting) {
-			$this->{$setting} = $config[$setting];
+	function __construct(View $View, $settings = array()) {
+		foreach(array_keys($settings) as $setting) {
+			$this->{$setting} = $settings[$setting];
 		}
+		parent::__construct($View, $settings);
 	}
 	function inputs($fields = null, $locales = null) {
 		if ($fields == null) {
@@ -82,8 +84,7 @@ class MultiHelper extends AppHelper {
 	}
 	
 	function element($name, $params = array(), $loadHelpers = false) {
-		$View = &ClassRegistry::getObject('view');
-		return $View->element($name.'/'.$this->lang, $params, $loadHelpers);
+		return $this->_View->element($name.'/'.$this->lang, $params, $loadHelpers);
 	}
 }
 ?>
