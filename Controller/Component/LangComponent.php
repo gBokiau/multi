@@ -10,32 +10,40 @@ class LangComponent extends Component {
 	public $langFromCookie = null;
 	public $includes = array();
 
-	//called before Controller::beforeFilter()
-	function initialize(&$controller) {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		parent::__construct($collection, $settings);
+		$controller = $collection->getController();
 		$this->I18n = $controller->I18n = I18n::getInstance();
 		$this->_makeCatalog();
-		$this->langFromUrl = $this->_assertLanguage(isset($controller->params['language'])? $controller->params['language'] : "");
+		$this->langFromUrl = $this->_assertLanguage(isset($controller->params['language']) ? $controller->params['language'] : "");
 		$this->Cookie->key = Configure::read('Security.salt');
 		$this->langFromCookie = $this->_assertLanguage($this->Cookie->read('lang'));
 		if (($this->lang = $this->langFromUrl) || ($this->lang = $this->langFromCookie) || ($this->lang = $this->_autoLanguage())) {
-			$this->_setLanguage($controller);
+			$this->_setLanguage();
+		} else {
+			$this->_setLanguage(current(array_keys($this->settings)));
+		}
+ 	}
+
+	public function initialize($controller) {
+		if (!$this->langFromUrl) {
+			$this->_redirectToLang($controller, $this->lang);
 		}
 		Configure::write('Config.locale', $this->catalog[$this->lang]['locale']);
 		$this->_updateCookie($this->lang);
 		setlocale(LC_TIME, $this->catalog[$this->lang]['_locale']);
- 	}
+	}
 
-	function _setLanguage($controller) {
-		$return = $this->I18n->l10n->get($this->lang);
+	function _setLanguage($lang = null) {
+		if($lang === null) {$lang = $this->lang;}
+		$return = $this->I18n->l10n->get($lang);
 		$this->lang = $this->I18n->l10n->lang;
-		if (!$this->langFromUrl) {
-			$this->_redirectToLang($controller, $this->lang);
-		}
 	}
 
 	function _makeCatalog() {
-		$this->I18n->l10n->default = array_shift(array_keys($this->settings));
 		$_map = $this->I18n->l10n->catalog(array_keys($this->settings));
+		$default = current($_map);
+		$this->default = $this->I18n->l10n->default = $default['locale'];
 		foreach($this->settings as $lang=>$locale) {
 			$this->catalog[$lang] = $_map[$lang];
 			$this->catalog[$lang]['_locale'] = $locale;
